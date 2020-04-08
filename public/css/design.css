@@ -1,0 +1,49 @@
+/* Main Layout */
+
+main {
+    min-height: 70vh;
+}
+
+.container, .container-fluid {
+    background-color: #f8fafc;
+}
+
+.nav-link {
+    font-size: 1.2rem;
+}
+
+.footer li a{
+    font-family: 'Raleway', sans-serif;
+}
+
+.footer-copyright {
+    width: 100%;
+    background: black;
+    text-align: right;
+}
+
+.footer-copyright p {
+    margin-bottom: 0;;
+    font-size: 0.6em;
+}
+
+/* Index Page */
+
+.main-content-index {
+    background-image: url("https://picsum.photos/id/257/1920/1080");
+    background-blend-mode: lighten;
+    min-height: 90vh;
+}
+
+.main-content-index section {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 3em;
+}
+
+/* Info Page */
+
+.huge-text {
+    font-size: 4em;
+    margin-bottom: 0;;
+}
+
