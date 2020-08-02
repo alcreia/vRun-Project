@@ -14,8 +14,10 @@ class CreateTransactionsTable extends Migration
     public function up()
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table ->integer('user_id')->references('id')->on('users');
+            $table->id();
+            $table->integer('user_id')->references('id')->on('users');
             $table->string('snap_token');
+            $table->bigInteger('price');
             $table->string('order_id')->nullable();
             $table->string('type')->nullable();
             $table->string('status')->nullable();

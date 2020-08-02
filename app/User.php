@@ -16,13 +16,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'raceType',
         'name',
+        'age',
         'gender',
-        'dateOfBirth',
         'angkatan',
-        'blood',
-        'jersey',
         'email',
         'phone',
         'password',
@@ -46,4 +43,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function jersey() {
+        return $this->hasOne(User_jersey::class);
+    }
+
+    public function donation() {
+        return $this->hasOne(User_donation::class);
+    }
+
+    public function race_category() {
+        return $this->hasOne(User_race_category::class);
+    }
 }

@@ -34,7 +34,7 @@
         <div class="col-md-6">
             <p class="huge-text text-center">{{DB::table('participants')
                     ->where('raceType', '=', 'P')
-                    ->where('jarak', '>=', 3.33)
+                    ->where('jarak', '>=', 3)
                     ->count()
             }}</p>
             <h2 class="text-center">Peserta yang Menyelesaikan Lomba</h2>

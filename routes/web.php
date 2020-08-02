@@ -23,11 +23,15 @@ Route::get('/results', function () {
     return view('pages.results');
 });
 
-Route::get('/payment',  'RacePaymentController@payment');
-Route::post('/payment/notify', 'RacePaymentController@paymentNotification');
-Route::post('/payment/complete', 'RacePaymentController@payComplete');
-Route::post('/upload', 'RacePaymentController@handleUpload');
+Route::get('/register', 'Auth\RegisterController@showRegistrationForm');
+Route::post('/register', 'Auth\RegisterController@register')->name('register');
 
-Auth::routes();
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/payment',  'RacePaymentController@payment');
+    Route::get('/payment/snap',  'RacePaymentController@requestMidtrans');
+    Route::post('/payment/notify', 'RacePaymentController@paymentNotification');
+    Route::post('/payment/complete', 'RacePaymentController@payComplete');
+    Route::post('/upload', 'RacePaymentController@handleUpload');
+});
 
-Route::get('/home', 'HomeController@index')->name('home');
+Auth::routes(['register' => 'false']);

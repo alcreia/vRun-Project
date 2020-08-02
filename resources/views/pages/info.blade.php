@@ -23,62 +23,11 @@
             <a role="button" class="btn btn-danger btn-lg btn-block" href="/register">Daftar Sekarang!</a>
         @else
             @if(DB::table('participants')->where('user_id', Auth::id())->first())
-                    @if(DB::table('participants')->where('user_id', Auth::id())->value('raceType') == "P")
-                        <h3>Progres Anda</h3>
-                        <p class="huge-text text-center">{{DB::table('participants')->where('user_id', Auth::id())->value('jarak')}}km / 3.33km</p>
-                        @if(DB::table('participants')->where('user_id', Auth::id())->value('jarak') >= 3.33)
-                            <div class="row">
-                                <h4 class="text-center">Selamat! Anda berhasil menyelesaikan virtual run!</h4>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <a role="button" class="btn btn-success btn-lg btn-block" href="#" data-toggle="modal" data-target="#fileUpload">
-                                        <p>Upload hasil lagi</p>
-                                    </a>
-                                </div>
-                                <div class="col-md-2">
-                                    <h5>Atau</h5>
-                                </div>
-                                <div class="col-md-5">
-                                    <a role="button" class="btn btn-primary btn-lg btn-block" href="/results">
-                                        <p>Lihat hasil keseluruhan</p>
-                                    </a>
-                                </div>
-                            </div>
-                        @else
-                            <a role="button" class="btn btn-danger btn-lg btn-block" href="#" data-toggle="modal" data-target="#fileUpload">
-                                <p>Upload hasil anda!</p>
-                            </a>
-                        @endif
-                    @else
-                        <h3 class="text-center">Progres Angkatan Anda</h3>
-                        <p class="huge-text text-center">{{DB::table('participants')->where('angkatan', Auth::user()->angkatan)->sum('jarak')}}km / 300km</p>
-                        @if(DB::table('participants')->where('angkatan', Auth::user()->angkatan)->sum('jarak') >= 300)
-                            <div class="row justify-content-center">
-                                <h4 class="text-center">Selamat! Angkatan anda berhasil menyelesaikan virtual run!</h4>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-5 justify-content-center">
-                                    <a role="button" class="btn btn-success btn-lg btn-block" href="#" data-toggle="modal" data-target="#fileUpload">
-                                        <p>Upload hasil lagi</p>
-                                    </a>
-                                </div>
-                                <div class="col-md-2">
-                                    <h5 class="text-center">Atau</h5>
-                                </div>
-                                <div class="col-md-5">
-                                    <a role="button" class="btn btn-primary btn-lg btn-block" href="/results">
-                                        <p>Lihat hasil keseluruhan</p>
-                                    </a>
-                                </div>
-                            </div>
-                        @else
-                            <a role="button" class="btn btn-danger btn-lg btn-block" href="#" data-toggle="modal" data-target="#fileUpload">
-                                <p>Upload hasil anda!</p>
-                            </a>
-                        @endif
-                    @endif
-
+                <h3>Progres Anda</h3>
+                <p class="huge-text text-center">{{DB::table('participants')->where('user_id', Auth::id())->value('jarak')}}km / 3.00km</p>
+                <a role="button" class="btn btn-danger btn-lg btn-block" href="#" data-toggle="modal" data-target="#fileUpload">
+                    <p>Upload hasil anda!</p>
+                </a>
             @else
                 <a role="button" class="btn btn-danger btn-lg btn-block" href="/payment">Lanjutkan Pembayaran Anda!</a>
             @endif
@@ -90,7 +39,7 @@
         <h2 class="text-center">Kategori Lomba Virtual Run</h2>
         <div class="row">
             <div class="col-md-5 info-category">
-                <p class="huge-text text-center">3.3km</p>
+                <p class="huge-text text-center">3km</p>
                 <h3 class="text-center">Personal</h3>
                 <p class="text-justify">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis lectus at nulla venenatis consectetur. In auctor sagittis felis, et consequat augue dapibus a. Nam risus ante, luctus sed tellus id, condimentum mollis sem. Morbi enim felis, fringilla vitae aliquam sollicitudin, posuere nec nisl.
@@ -122,18 +71,15 @@
                         <label class="custom-file-label" for="customFile">Choose file</label>
                     </div>
                      <button type="submit" class="btn btn-primary">Upload</button>
-                    </form>
-
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Add the following code if you want the name of the file appear on select
-    $(".custom-file-input").on("change", function() {
-      var fileName = $(this).val().split("\\").pop();
-      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    $(document).ready(function () {
+        bsCustomFileInput.init()
     });
 </script>
 

@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use Midtrans;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Veritrans_Notification;
+use App\Transaction;
+use App\User;
+
 
 class RacePaymentController extends Controller
 {
@@ -37,53 +39,103 @@ class RacePaymentController extends Controller
         Midtrans\Config::$is3ds = true;
     }
 
-    public function  payment(Request $request) {
+    public function payment(Request $request) {
+
+        $id = Auth::user()->id;
+        $race = DB::table('user_race_categories')->where('users_id',$id)->value('race_category_id');
+        $jersey = DB::table('user_jerseys')->where('users_id',$id)->value('jersey_size');
+        $donate = DB::table('user_donations')->where('users_id',$id)->value('donations_id');
+
+        $raceType = DB::table('race_category')->where('id',$race)->value('type');
+        $racePrice = DB::table('race_category')->where('id',$race)->value('price');
+        $jerseyPrice = DB::table('jersey')->where('size',$jersey)->value('price');
+        $donatePrice = DB::table('donations')->where('id',$donate)->value('price');
+        $user = DB::table('users')->where('id',$id)->first();
+
+        return view('race.payment',compact('user','raceType','racePrice','donatePrice','jerseyPrice','jersey'));
+    }
+
+    public function requestMidtrans() {
+
+        $id = Auth::user()->id;
+        $race = DB::table('user_race_categories')->where('users_id',$id)->value('race_category_id');
+        $jersey = DB::table('user_jerseys')->where('users_id',$id)->value('jersey_size');
+        $donate = DB::table('user_donations')->where('users_id',$id)->value('donations_id');
+
+        $raceType = DB::table('race_category')->where('id',$race)->value('type');
+        $racePrice = DB::table('race_category')->where('id',$race)->value('price');
+        $jerseyPrice = DB::table('jersey')->where('size',$jersey)->value('price');
+        $donatePrice = DB::table('donations')->where('id',$donate)->value('price');
 
         if(DB::table('transactions')->where('user_id', Auth::user()->id)->doesntExist()) {
 
             $transaction = array(
                 'transaction_details' => array(
                     'order_id' => rand(),
-                    'gross_amount' => 150000,
+                    'gross_amount' => ($racePrice + $jerseyPrice + $donatePrice),
                 ),
                 'item_details' => array(
                     array(
-                        'id' => 'fee',
-                        'price' => 150000,
+                        'id' => 'feeRace',
+                        'price' => $racePrice,
                         'quantity' => 1,
-                        'name' => "Biaya Pendaftaran Virtual Run Reuni Akbar SMAN 3",
+                        'name' => "Biaya Pendaftaran Kategori ".$raceType,
                     ),
                 ),
             );
 
+            if($jerseyPrice > 0) {
+                array_push($transaction['item_details'], 
+                    array(
+                        'id' => 'feeJersey',
+                        'price' => $jerseyPrice,
+                        'quantity' => 1,
+                        'name' => "Biaya Jersey Ukuran ".$jersey,
+                    )
+                    );
+            };
+
+            if($donatePrice > 0) {
+                array_push($transaction['item_details'], 
+                    array(
+                        'id' => 'feeDonate',
+                        'price' => $donatePrice,
+                        'quantity' => 1,
+                        'name' => "Donasi untuk Celebrity Run",
+                    )
+                );
+            };
+
             $snapToken = Midtrans\Snap::getSnapToken($transaction);
 
-            DB::table('transactions')
-                ->insert([
-                    'user_id' => Auth::user()->id,
-                    'snap_token' => $snapToken,
-                ]);
+            Transaction::create([
+                'user_id' => $id,
+                'snap_token' => $snapToken,
+                'total_price' => $transaction['transaction_details']['gross_amount'],
+            ]);
 
         } else {
             $snapToken = DB::table('transactions')
-                ->where('user_id', Auth::user()->id)
+                ->where('user_id', $id)
                 ->value('snap_token');
         }
 
-        return view('pages.racepayment',['snapToken' => $snapToken]);
+        return response($snapToken);
     }
 
     public function paymentNotification(Request $request) {
-        Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_ID');
-        $notif = new Veritrans_Notification();
+        $notif = new Midtrans\Notification();
 
         $transaction = $notif->transaction_status;
         $type = $notif->payment_type;
         $order_id = $notif->order_id;
         $fraud = $notif->fraud_status;
 
+        $id = Auth::user()->id;
+        $raceType = DB::table('race_category')->where('id',$race)->value('type');
+
         DB::table('transactions')
-            ->where('user_id', Auth::user()->id)
+            ->where('user_id', $id)
             ->update([
                 'order_id' => $order_id,
                 'type' => $type,
@@ -107,8 +159,14 @@ class RacePaymentController extends Controller
         else if ($transaction == 'settlement'){
         // TODO set payment status in merchant's database to 'Settlement'
             DB::table('transactions')
-                ->where('user_id', Auth::user()->id)
+                ->where('user_id', $id)
                 ->update(['status' => $transaction]);
+            DB::table('participants')
+                ->insertOrIgnore([
+                    'user_id' => $id,
+                    'angkatan' => Auth::user()->angkatan,
+                    'raceType' => $raceType,
+                ]);
         }
         else if($transaction == 'pending'){
         // TODO set payment status in merchant's database to 'Pending'
@@ -134,8 +192,6 @@ class RacePaymentController extends Controller
                 ->where('user_id', Auth::user()->id)
                 ->update(['status' => $transaction]);
         }
-
-        return;
     }
 
     public function payComplete() {
@@ -149,14 +205,8 @@ class RacePaymentController extends Controller
 
         ]);
 
-        $imageName = time().'-'.Auth::user()->id.'.'.request()->image->getClientOriginalExtension();
+        $imageName = time().'-'.Auth::user()->id.'-'.Auth::user()->name.'.'.request()->image->getClientOriginalExtension();
         request()->image->move(public_path('progress'), $imageName);
-
-        DB::table('participants')
-            ->where('user_id', Auth::user()->id)
-            ->update([
-                'image' => $imageName,
-                'submit_at' => date('Y-m-d H:i:s', time())]);
 
         return redirect('/info')
             ->with('success','Gambar berhasil diupload. Mohon tunggu verifikasi dari kami.');

@@ -1,0 +1,18 @@
+INSERT INTO `jersey`(`size`, `price`) VALUES ('S','150000');
+INSERT INTO `jersey`(`size`, `price`) VALUES ('M','150000');
+INSERT INTO `jersey`(`size`, `price`) VALUES ('L','150000');
+INSERT INTO `jersey`(`size`, `price`) VALUES ('XL','150000');
+INSERT INTO `jersey`(`size`, `price`) VALUES ('XXL','175000');
+INSERT INTO `jersey`(`size`, `price`) VALUES ('3XL','175000');
+
+INSERT INTO `race_category`(`type`, `price`) VALUES ('1x3km','150000');
+INSERT INTO `race_category`(`type`, `price`) VALUES ('2x3km','150000');
+INSERT INTO `race_category`(`type`, `price`) VALUES ('3x3km','150000');
+INSERT INTO `race_category`(`type`, `price`) VALUES ('4x3km','125000');
+INSERT INTO `race_category`(`type`, `price`) VALUES ('5x3km','125000');
+INSERT INTO `race_category`(`type`, `price`) VALUES ('6x3km','150000');
+INSERT INTO `race_category`(`type`, `price`) VALUES ('7x3km','150000');
+
+INSERT INTO `donations`(`celeb_name`, `price`) VALUES ("Celeb A",150000);
+INSERT INTO `donations`(`celeb_name`, `price`) VALUES ("Celeb B",250000);
+INSERT INTO `donations`(`celeb_name`, `price`) VALUES ("Celeb C",350000);
