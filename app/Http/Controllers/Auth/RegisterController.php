@@ -100,6 +100,21 @@ class RegisterController extends Controller
         ]);
     }
 
+    public function priceCheck(Request $request) {
+        if($request['jersey'] != '') {
+            User_jersey::create([
+                'users_id' => Auth::user()->id,
+                'jersey_size' => $request['jersey'],
+            ]);
+        };
+        if($request['donation'] != '') {
+            User_donation::create([
+                'users_id' => Auth::user()->id,
+                'donations_id' => $request['donation'],
+            ]); 
+        };   
+    }
+
     /**
      * Handle a registration request for the application.
      *
@@ -112,14 +127,14 @@ class RegisterController extends Controller
 
         event(new Registered($user = $this->create($request->all())));
 
+        $this->guard()->login($user);
+
         User_race_category::create([
             'users_id' => Auth::user()->id,
             'race_category_id' => $request['raceType'],
         ]);
 
-        priceCheck($request);
-
-        $this->guard()->login($user);
+        $this->priceCheck($request);
 
         if ($response = $this->registered($request, $user)) {
             return $response;
@@ -150,20 +165,5 @@ class RegisterController extends Controller
     protected function registered(Request $request, $user)
     {
         //
-    }
-
-    public function priceCheck(Request $request) {
-        if($request['jersey'] != '') {
-            User_jersey::create([
-                'users_id' => Auth::user()->id,
-                'jersey_size' => $request['jersey'],
-            ]);
-        };
-        if($request['donation'] != '') {
-            User_donation::create([
-                'users_id' => Auth::user()->id,
-                'donations_id' => $request['donation'],
-            ]); 
-        };   
     }
 }

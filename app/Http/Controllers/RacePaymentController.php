@@ -111,7 +111,7 @@ class RacePaymentController extends Controller
             Transaction::create([
                 'user_id' => $id,
                 'snap_token' => $snapToken,
-                'total_price' => $transaction['transaction_details']['gross_amount'],
+                'price' => ($racePrice + $jerseyPrice + $donatePrice),
             ]);
 
         } else {
@@ -192,6 +192,8 @@ class RacePaymentController extends Controller
                 ->where('user_id', Auth::user()->id)
                 ->update(['status' => $transaction]);
         }
+
+        return; 
     }
 
     public function payComplete() {

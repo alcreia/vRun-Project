@@ -35,3 +35,7 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Auth::routes(['register' => 'false']);
+
+Route::group(['prefix' => 'admin'], function () {
+    Voyager::routes();
+});
