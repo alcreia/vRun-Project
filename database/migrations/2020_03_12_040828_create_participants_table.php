@@ -16,7 +16,7 @@ class CreateParticipantsTable extends Migration
         Schema::create('participants', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->references('id')->on('users');
-            $table->integer('angkatan')->references('angkatan')->on('users');
+            $table->string('angkatan')->references('angkatan')->on('users');
             $table->char('raceType')->references('race_category_id')->on('user_race_categories');
             $table->float('jarak',8,2)->nullable();
             $table->dateTime('submit_at')->nullable();

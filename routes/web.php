@@ -19,9 +19,8 @@ Route::get('/info', function () {
     return view('pages.info');
 });
 
-Route::get('/results', function () {
-    return view('pages.results');
-});
+Route::get('/results', 'ResultsController@index');
+Route::get('/results/get_data', 'ResultsController@chartData');
 
 Route::get('/register', 'Auth\RegisterController@showRegistrationForm');
 Route::post('/register', 'Auth\RegisterController@register')->name('register');

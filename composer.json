@@ -18,6 +18,8 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
         "midtrans/midtrans-php": "^2.3",
+        "socialiteproviders/garmin-connect": "dev-master",
+        "socialiteproviders/strava": "^3.0",
         "tcg/voyager": "^1.4"
     },
     "require-dev": {

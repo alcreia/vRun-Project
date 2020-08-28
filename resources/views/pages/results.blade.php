@@ -8,11 +8,14 @@
 
 <div class="container py-4">
     <h1 class="text-center"> Statistik Perlombaan </h1>
-    <hr>
+
+    <div class="row px-5">
+        <canvas id="myChart" width="200" height="100"></canvas>
+    </div>
 
     <div class="row py-4">
         <div class="col-md-6">
-            <p class="huge-text text-center">{{DB::table('participants')->count()}}</p>
+            <p class="huge-text text-center">{{$count}}</p>
             <h2 class="text-center">Total Peserta Lomba</h2>
         </div>
         <div class="col-md-6"></div>
@@ -23,7 +26,7 @@
     <div class="row py-4">
         <div class="col-md-6"></div>
         <div class="col-md-6">
-            <p class="huge-text text-center">{{DB::table('participants')->sum('jarak')}} km</p>
+            <p class="huge-text text-center">{{$dist}} km</p>
             <h2 class="text-center">Total Jarak yang Ditempuh Peserta</h2>
         </div>
     </div>
@@ -32,44 +35,55 @@
 
     <div class="row py-4">
         <div class="col-md-6">
-            <p class="huge-text text-center">{{DB::table('participants')
-                    ->where('raceType', '=', 'P')
-                    ->where('jarak', '>=', 3)
-                    ->count()
-            }}</p>
+            <p class="huge-text text-center">{{$success_count}}</p>
             <h2 class="text-center">Peserta yang Menyelesaikan Lomba</h2>
         </div>
         <div class="col-md-6"></div>
     </div>
 
     <hr>
-
-    <div class="row py-4">
-        <div class="col-md-6"></div>
-        <div class="col-md-6">
-            <p class="huge-text text-center">
-                @php
-                    $array = DB::table('participants')
-                                ->where('raceType', '=', 'A')
-                                ->select('angkatan', DB::raw('sum(jarak) as sum'))
-                                ->groupBy('angkatan')
-                                ->get();
-
-                    $array = $array->pluck('sum');
-                    $count = 0;
-                    foreach($array as $sum) {
-                        if($sum >= 100) {
-                            $count++;
-                        }
-                    }
-                    echo $count;
-                @endphp
-            </p>
-            <h2 class="text-center">Angkatan yang Menyelesaikan Lomba</h2>
-        </div>
-    </div>
-
 </div>
+
+<script>
+
+    var label = new Array();
+    var dataset = new Array();
+
+    function showGraph() {
+        $.get('/results/get_data',function(response){
+            label = response.AxisLabels;
+            dataset = response.DataSets;
+
+            var ctx = document.getElementById("myChart").getContext('2d');
+            var chart = new Chart(ctx,{
+                type: 'bar',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        label: 'Peserta',
+                        backgroundColor:'#1f1e33',
+                        data: dataset,
+                    }],
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            });
+        });
+
+    };
+
+    $(document).ready(function() {
+        showGraph();
+    });
+    
+</script>
 
 @endsection
 

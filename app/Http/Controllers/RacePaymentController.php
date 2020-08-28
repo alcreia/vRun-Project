@@ -204,10 +204,12 @@ class RacePaymentController extends Controller
         request()->validate([
 
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+            'distance' => 'numeric',
 
         ]);
 
-        $imageName = time().'-'.Auth::user()->id.'-'.Auth::user()->name.'.'.request()->image->getClientOriginalExtension();
+        $dist = str_replace(".","_",request()->distance);
+        $imageName = time().'-'.Auth::user()->id.'-'.Auth::user()->name.'-'.$dist.'km.'.request()->image->getClientOriginalExtension();
         request()->image->move(public_path('progress'), $imageName);
 
         return redirect('/info')
