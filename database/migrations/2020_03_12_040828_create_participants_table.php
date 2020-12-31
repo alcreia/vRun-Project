@@ -17,7 +17,7 @@ class CreateParticipantsTable extends Migration
             $table->id();
             $table->integer('user_id')->references('id')->on('users');
             $table->string('angkatan')->references('angkatan')->on('users');
-            $table->char('raceType')->references('race_category_id')->on('user_race_categories');
+            $table->char('raceType')->references('race_category_id')->on('race_categories');
             $table->float('jarak',8,2)->nullable();
             $table->dateTime('submit_at')->nullable();
         });

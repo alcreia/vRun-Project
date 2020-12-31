@@ -15,15 +15,21 @@ Route::get('/', function () {
     return view('index');
 });
 
-Route::get('/info', function () {
-    return view('pages.info');
-});
+Route::get('/info', 'InfoController@index');
+
+Route::get('/race', 'RacePaymentController@showRaceForm');
+Route::post('/race/new', 'RacePaymentController@registerRacer');
+
+Route::get('strava/connect', 'InfoController@stravaAuth');
+Route::get('strava/token', 'InfoController@stravaGetToken');
+Route::get('strava/activities', 'InfoController@stravaActivityList');
+Route::get('strava/submit/{id}', 'InfoController@stravaSubmitActivity');
 
 Route::get('/results', 'ResultsController@index');
 Route::get('/results/get_data', 'ResultsController@chartData');
 
-Route::get('/register', 'Auth\RegisterController@showRegistrationForm');
-Route::post('/register', 'Auth\RegisterController@register')->name('register');
+Route::get('/auth/{provider}', 'SocialController@redirectProvider');
+Route::get('/auth/callback/{provider}', 'SocialController@handleCallback');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/payment',  'RacePaymentController@payment');
@@ -33,7 +39,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/upload', 'RacePaymentController@handleUpload');
 });
 
-Auth::routes(['register' => 'false']);
+Auth::routes();
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();

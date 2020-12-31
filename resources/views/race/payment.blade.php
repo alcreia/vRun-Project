@@ -31,7 +31,7 @@
             </tr>
             <tr>
                 <th scope="row">Email</th>
-                <td>{{$user->email}}</td>
+                <td>{{Auth::user()->email}}</td>
             </tr>
             <tr>
                 <th scope="row">Nomor Telepon</th>

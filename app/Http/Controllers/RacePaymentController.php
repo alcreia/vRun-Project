@@ -39,18 +39,46 @@ class RacePaymentController extends Controller
         Midtrans\Config::$is3ds = true;
     }
 
+    public function showRaceForm() {   
+
+        if(DB::table('user_data')->where('user_id',Auth::user()->id)->first()) {
+            return redirect('/payment');
+        } else {
+            $racetype = DB::table('race_category')->get();
+            $jersey = DB::table('jersey')->get();
+            $donate = DB::table('donations')->get();
+            return view('race.index', compact('racetype','donate','jersey'));
+        }
+    }
+
+    public function registerRacer(Request $request) {
+        DB::table('user_data')->insert([
+            'user_id' => Auth::user()->id,
+            'name' => $request['name'],
+            'age' => $request['age'],
+            'gender' => $request['gender'],
+            'angkatan' => $request['angkatan'],
+            'alamat' => $request['alamat'],
+            'phone' => $request['phone'],
+            'jersey' => $request['jersey'],
+            'donate' => $request['donation'],
+            'race_type' => $request['racetype'],
+        ]);
+        return redirect('/payment');
+    }
+
     public function payment(Request $request) {
 
         $id = Auth::user()->id;
-        $race = DB::table('user_race_categories')->where('users_id',$id)->value('race_category_id');
-        $jersey = DB::table('user_jerseys')->where('users_id',$id)->value('jersey_size');
-        $donate = DB::table('user_donations')->where('users_id',$id)->value('donations_id');
+        $race = DB::table('user_data')->where('user_id',$id)->value('race_type');
+        $jersey = DB::table('user_data')->where('user_id',$id)->value('jersey');
+        $donate = DB::table('user_data')->where('user_id',$id)->value('donate');
 
         $raceType = DB::table('race_category')->where('id',$race)->value('type');
         $racePrice = DB::table('race_category')->where('id',$race)->value('price');
         $jerseyPrice = DB::table('jersey')->where('size',$jersey)->value('price');
         $donatePrice = DB::table('donations')->where('id',$donate)->value('price');
-        $user = DB::table('users')->where('id',$id)->first();
+        $user = DB::table('user_data')->where('user_id',$id)->first();
 
         return view('race.payment',compact('user','raceType','racePrice','donatePrice','jerseyPrice','jersey'));
     }
@@ -58,9 +86,9 @@ class RacePaymentController extends Controller
     public function requestMidtrans() {
 
         $id = Auth::user()->id;
-        $race = DB::table('user_race_categories')->where('users_id',$id)->value('race_category_id');
-        $jersey = DB::table('user_jerseys')->where('users_id',$id)->value('jersey_size');
-        $donate = DB::table('user_donations')->where('users_id',$id)->value('donations_id');
+        $race = DB::table('user_data')->where('user_id',$id)->value('race_type');
+        $jersey = DB::table('user_data')->where('user_id',$id)->value('jersey');
+        $donate = DB::table('user_data')->where('user_id',$id)->value('donate');
 
         $raceType = DB::table('race_category')->where('id',$race)->value('type');
         $racePrice = DB::table('race_category')->where('id',$race)->value('price');
@@ -203,14 +231,21 @@ class RacePaymentController extends Controller
     public function handleUpload(Request $request) {
         request()->validate([
 
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|nullable',
             'distance' => 'numeric',
-
+            'strava_link' => 'string|nullable'
         ]);
 
         $dist = str_replace(".","_",request()->distance);
         $imageName = time().'-'.Auth::user()->id.'-'.Auth::user()->name.'-'.$dist.'km.'.request()->image->getClientOriginalExtension();
         request()->image->move(public_path('progress'), $imageName);
+
+        DB::table('uploads')->insert([
+            'user_id' => Auth::user()->id,
+            'distance' => $request->distance,
+            'image' => $imageName,
+            'link' => $request->strava_link,
+        ]);
 
         return redirect('/info')
             ->with('success','Gambar berhasil diupload. Mohon tunggu verifikasi dari kami.');

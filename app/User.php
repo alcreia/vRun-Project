@@ -16,14 +16,11 @@ class User extends \TCG\Voyager\Models\User
      * @var array
      */
     protected $fillable = [
-        'name',
-        'age',
-        'gender',
-        'angkatan',
         'email',
-        'phone',
         'password',
-        'alamat',
+        'provider',
+        'provider_id',
+        'avatar',
     ];
 
     /**
@@ -43,16 +40,4 @@ class User extends \TCG\Voyager\Models\User
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public function jersey() {
-        return $this->hasOne(User_jersey::class);
-    }
-
-    public function donation() {
-        return $this->hasOne(User_donation::class);
-    }
-
-    public function race_category() {
-        return $this->hasOne(User_race_category::class);
-    }
 }

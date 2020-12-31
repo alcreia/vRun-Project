@@ -49,4 +49,10 @@ return [
         'isSanitized' => env('MIDTRANS_IS_SANITIZED', true),
         'is3ds' => env('MIDTRANS_IS_3DS', true),
     ],
+    
+    'strava' => [    
+        'client_id' => env('STRAVA_CLIENT_ID'),  
+        'client_secret' => env('STRAVA_CLIENT_SECRET'),  
+        'redirect' => env('STRAVA_REDIRECT_URI') 
+    ],
 ];

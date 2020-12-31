@@ -8,9 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Auth\Events\Registered;
 use App\User;
-use App\User_jersey;
-use App\User_donation;
-use App\User_race_category;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -50,11 +47,8 @@ class RegisterController extends Controller
     }
 
     public function showRegistrationForm() {
-        $jersey = DB::table('jersey')->orderBy('id','asc')->get();
-        $donations = DB::table('donations')->get();
-        $category = DB::table('race_category')->get();
 
-        return view('race.register', compact('jersey','donations','category'));
+        return view('auth.register');
     }
 
     /**
@@ -66,17 +60,11 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'raceType' => ['required'],
-            'name' => ['required', 'string', 'max:255'],
-            'age' => ['required', 'numeric'],
-            'gender' => ['required', 'alpha'],
-            'angkatan' => ['nullable', 'string'],
-            'jersey' => ['nullable'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'phone' => ['required', 'string', 'min:10', 'max:13'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'alamat' => ['required', 'string', 'max:255'],
-            'donation' => ['nullable'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'provider' => ['nullable',],
+            'provider_id' => ['nullable'],
+            'avatar' => ['nullable'],
         ]);
     }
 
@@ -89,30 +77,12 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
-            'age' => $data['age'],
-            'gender' => $data['gender'],
-            'angkatan' => $data['angkatan'],
             'email' => $data['email'],
-            'phone' => $data['phone'],
             'password' => Hash::make($data['password']),
-            'alamat' => $data['alamat'],
+            'provider' => $data['provider'],
+            'provider_id' => $data['provider_id'],
+            'avatar' => $data['avatar'],
         ]);
-    }
-
-    public function priceCheck(Request $request) {
-        if($request['jersey'] != '') {
-            User_jersey::create([
-                'users_id' => Auth::user()->id,
-                'jersey_size' => $request['jersey'],
-            ]);
-        };
-        if($request['donation'] != '') {
-            User_donation::create([
-                'users_id' => Auth::user()->id,
-                'donations_id' => $request['donation'],
-            ]); 
-        };   
     }
 
     /**
@@ -128,13 +98,6 @@ class RegisterController extends Controller
         event(new Registered($user = $this->create($request->all())));
 
         $this->guard()->login($user);
-
-        User_race_category::create([
-            'users_id' => Auth::user()->id,
-            'race_category_id' => $request['raceType'],
-        ]);
-
-        $this->priceCheck($request);
 
         if ($response = $this->registered($request, $user)) {
             return $response;

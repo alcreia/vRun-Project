@@ -19,13 +19,13 @@ Registration |
     </div>
     @endif
 
-    <form action="{{ route('register') }}" method="POST" class="px-5">
+    <form action="/race/new" method="POST" class="px-5">
         @csrf
         <div class="form-group my-2">
             <label for="raceTypeSelect">Pilih kategori lomba</label>
-            <select class="form-control" name="raceType" id="raceTypeSelect" required>
+            <select class="form-control" name="racetype" id="raceTypeSelect" required>
                 <option value hidden>--- Pilih salah satu ---</option>
-                @foreach ($category as $cat)
+                @foreach ($racetype as $cat)
                     <option value={{$cat->id}} {{ old('raceType') == $cat->id ? 'selected' : '' }}>{{$cat->type}} (Rp {{number_format($cat->price)}})</option>    
                 @endforeach
             </select>
@@ -77,27 +77,12 @@ Registration |
         <div class="form-row my-2">
             <div class="form-group col-md-6">
                 <label for="emailInput">Email</label>
-                <input type="email" class="form-control" id="emailInput" name="email" required value={{old('email')}}>
+                <input type="email" class="form-control" id="emailInput" name="email" value={{Auth::user()->email}} disabled>
             </div>
 
             <div class="form-group col-md-6">
                 <label for="phoneInput">Nomor HP</label>
                 <input type="tel" class="form-control" id="phoneInput" name="phone" required value={{old('phone')}}>
-            </div>
-        </div>
-
-        <div class="form-row my-2">
-            <div class="form-group col-md-6">
-                <label for="passwordInput">Password</label>
-                <input type="password" class="form-control" id="passwordInput" name="password" required>
-                <small id="passwordHelpBlock" class="form-text text-muted">
-                    Minimal 8 huruf
-                </small>
-            </div>
-
-            <div class="form-group col-md-6">
-                <label for="password-confirm">Konfirmasi Password</label>
-                <input type="password" class="form-control" id="password-confirm" name="password_confirmation" required>
             </div>
         </div>
 
@@ -134,7 +119,7 @@ Registration |
             <label for="donation">Donasi Untuk Celeb Runner?</label>
             <select class="form-control" name="donation" id="donation">
                 <option value selected>Tidak ada</option>
-                @foreach ($donations as $don)
+                @foreach ($donate as $don)
                     <option value={{$don->id}} {{ old('donation') == $don->id ? 'selected' : '' }}>{{$don->celeb_name}} (Rp {{number_format($don->price)}} / km)
                     </option>    
                 @endforeach
