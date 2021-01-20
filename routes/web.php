@@ -19,6 +19,7 @@ Route::get('/info', 'InfoController@index');
 
 Route::get('/race', 'RacePaymentController@showRaceForm');
 Route::post('/race/new', 'RacePaymentController@registerRacer');
+Route::get('/race/upload', 'RacePaymentController@uploadResult');
 
 Route::get('strava/connect', 'InfoController@stravaAuth');
 Route::get('strava/token', 'InfoController@stravaGetToken');

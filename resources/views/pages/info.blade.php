@@ -39,23 +39,11 @@ About |
             @else
             <a role="button" class="btn btn-danger btn-lg px-5 py-3" href="/race">Daftar Untuk Lomba</a>
             @endif
-            <div class="row">
-                <div class="col-6">
-                <a role="button" class="btn btn-danger btn-block" id="uploadButton" href="#" data-toggle="modal"
-                    data-target="#fileUpload">
+            <div class="row justify-content-center">
+                <div class="col-8">
+                <a role="button" class="btn btn-danger btn-block" id="uploadButton" href="/race/upload">
                     <p>Upload hasil anda!</p>
                 </a>
-                </div>
-                <div class="col-6">
-                    @if(DB::table('user_strava')->where('user_id', Auth::id())->first())
-                    <a role="button" class="btn btn-danger btn-block" id="stravaActivityButton" href="/strava/activities">
-                        <p>Upload hasil dari Strava</p>
-                    </a>
-                    @else
-                    <a role="button" class="btn btn-danger btn-block" href="/strava/connect">
-                        <p>Hubungkan dengan Strava</p>
-                    </a>
-                    @endif
                 </div>
             </div>
             @endguest
@@ -63,7 +51,7 @@ About |
         </div>
     </section>
     <hr>
-    <section class="px-5 py-5 mx-auto col-md-8">
+    <section class="px-5 py-5 mx-auto col-md-10">
         <h2 class="text-center">Kategori Lomba Virtual Run</h2>
         <div class="row py-2">
             <div class="col-md-4 info-category">
@@ -81,36 +69,7 @@ About |
     </section>
 </div>
 
-<div class="modal fade" id="fileUpload" tabindex="-1" role="dialog" aria-labelledby="fileUploadText" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal" role="document">
-        <div class="modal-content">
-            <div class="modal-body" id="comingSoonText">
-                <p>
-                    Upload progres lari anda!
-                </p>
-                <form action="/upload" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="form-group">
-                        <label for="distanceInput">Jarak lari (km)</label>
-                        <input type="number" step="any" class="form-control" id="distanceInput" placeholder="0.00"
-                            name="distance">
-                    </div>
-                    <hr>
-                    <div class="custom-file py-4">
-                        <input type="file" class="custom-file-input" id="customFile" name="image">
-                        <label class="custom-file-label" for="customFile">Screenshot Aktivitas</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Upload</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-    $(document).ready(function () {
-        bsCustomFileInput.init();
-    });
 
     var text = ["2", "3", "4", "5", "6", "7", "1"];
     var counter = 0;
@@ -129,14 +88,6 @@ About |
     };
 
     setInterval(change, 2000);
-
-    $(function () {
-        $('#stravaActivityButton').click(function () {
-            $.get('/strava/activities', function (response) {
-                $('.strava-table').html(response);
-            });
-        });
-    });
 
 </script>
 

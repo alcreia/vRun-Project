@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Strava;
 use Carbon\Carbon;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 class InfoController extends Controller
 {
@@ -41,53 +39,6 @@ class InfoController extends Controller
         ]);   
 
         return redirect('/info');
-    }
-
-    public function stravaActivityList(Request $request) {
-        // Get the user
-        $user = DB::table('user_strava')->where('user_id',Auth::user()->id)->first();
-
-        // Check if current token has expired
-        if(strtotime(Carbon::now()) > $user->expired_at)
-        {
-            // Token has expired, generate new tokens using the currently stored user refresh token
-            $data_ref = Http::post('https://www.strava.com/oauth/token',[
-                'client_id' => env('CT_STRAVA_CLIENT_ID'),
-                'client_secret' => env('CT_STRAVA_CLIENT_SECRET'),
-                'grant_type' => 'refresh_token',
-                'refresh_token' => $user->refresh_token,
-            ]);
-    
-            $refresh = json_decode($data_ref->body());
-    
-            // Update the users tokens
-            DB::table('user_strava')->where('user_id', Auth::user()->id)->update([
-            'access_token' => $refresh->access_token,
-            'refresh_token' => $refresh->refresh_token
-            ]);
-
-        }
-
-            $data_ac = Http::get('https://www.strava.com/api/v3/athlete/activities',[
-                'access_token' => $user->access_token,
-            ]);
-
-            $activity = json_decode($data_ac->body());
-
-            $collect = collect($activity);
-            $page = $request->page;
-            $perPage = 5;
-    
-            $activity = new LengthAwarePaginator(
-                $collect->forPage($page,$perPage),
-                $collect->count(),
-                $perPage,
-                $page,
-                ['path' => '/strava/activities']
-            );
-
-            // Return $athlete array to view
-            return view('pages.strava')->with(compact('activity'));
     }
 
     public function stravaSubmitActivity($id) {
