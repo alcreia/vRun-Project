@@ -34,18 +34,18 @@ About |
             <p class="huge-text text-center">
                 {{DB::table('participants')->where('user_id', Auth::id())->value('jarak') ?? "0.00"}}km /
                 {{DB::table('participants')->where('user_id', Auth::id())->value('raceType') * 3}}.00km</p>
+                <div class="row justify-content-center">
+                    <div class="col-8">
+                    <a role="button" class="btn btn-danger btn-block" id="uploadButton" href="/race/upload">
+                        <p>Upload hasil anda!</p>
+                    </a>
+                    </div>
+                </div>
             @elseif(DB::table('user_data')->where('user_id', Auth::id())->first())
             <a role="button" class="btn btn-danger btn-lg" href="/payment">Lanjutkan Pembayaran Anda!</a>
             @else
             <a role="button" class="btn btn-danger btn-lg px-5 py-3" href="/race">Daftar Untuk Lomba</a>
             @endif
-            <div class="row justify-content-center">
-                <div class="col-8">
-                <a role="button" class="btn btn-danger btn-block" id="uploadButton" href="/race/upload">
-                    <p>Upload hasil anda!</p>
-                </a>
-                </div>
-            </div>
             @endguest
 
         </div>
