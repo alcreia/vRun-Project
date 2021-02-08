@@ -42,6 +42,40 @@
     </div>
 
     <hr>
+
+    <div class="row py-4 justify-content-center">
+        <h2 class="text-center">Top 10 Peserta Lomba</h2>
+        <div class="col-md-10">
+            <table class="table table-bordered table-hover my-4">
+                <thead>
+                    <tr>
+                        <th class="col-1">Rank</th>
+                        <th class="col-7">Nama</th>
+                        <th class="col-4">Jarak</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $i = 1;
+                    ?>
+                    @foreach($rank as $r)
+                    <tr>
+                        <td id="player_rank">
+                            <?php
+                                echo $i;
+                                $i++;
+                            ?>
+                        </td>
+                        <td id="player_name">{{DB::table('user_data')->where('user_id',$r->user_id)->value('name')}}</td>
+                        <td id="player_dist">{{($r->jarak)}}km</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr>
 </div>
 
 <script>

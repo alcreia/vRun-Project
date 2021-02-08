@@ -13,6 +13,7 @@ class ResultsController extends Controller
         $count = DB::table('participants')->count();
         $dist = DB::table('participants')->sum('jarak');
         $success = DB::table('participants')->get();
+        $rank = DB::table('participants')->orderBy('jarak','desc')->take(10)->get();
         $success_count = 0;
         foreach($success as $s) {
             if($s->jarak >= ($s->raceType * 3)) {
@@ -20,9 +21,7 @@ class ResultsController extends Controller
             }
         };
 
-        
-
-        return view('pages.results',compact('count','dist','success_count'));
+        return view('pages.results',compact('count','dist','success_count','rank'));
     }
 
     public function chartData() {
